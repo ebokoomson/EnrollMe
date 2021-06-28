@@ -6,7 +6,7 @@ public class Student implements Serializable {
     private String student_Name;
     private int student_ID;
     private College college;
-    private ArrayList<Course> courses = new ArrayList<>();
+    private ArrayList<CourseSection> courses = new ArrayList<>();
     private Major major;
     private static int numberOfStudents;
 
@@ -33,6 +33,10 @@ public class Student implements Serializable {
         return student_Name;
     }
 
+    public ArrayList<CourseSection> getCourseSections(){
+        return courses;
+    }
+
     public void setStudent_Name(String student_Name) {
         this.student_Name = student_Name;
     }
@@ -54,6 +58,9 @@ public class Student implements Serializable {
         college.addStudent(this);
 
     }
+    public void addCourseSection(CourseSection courseSection){
+        courses.add(courseSection);
+    }
 
     public Major getMajor(){
         return major;
@@ -61,6 +68,13 @@ public class Student implements Serializable {
 
     public void setMajor(Major major){
         this.major=major;
+    }
+
+    public void displayCourses(){
+        for(CourseSection course: this.getCourseSections()){
+            System.out.println(course.getSection_Name());
+
+        }
     }
 
     public static Student findStudent(int id, University university){

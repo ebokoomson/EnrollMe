@@ -232,7 +232,6 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         String response= scanner.nextLine();
-
         ArrayList<College> colleges = new ArrayList<>(5);
         colleges.addAll(university.getColleges());
         switch(response) {
@@ -273,9 +272,7 @@ public class Main {
         catch(Exception e){
             System.out.println("There was an error");
         }
-
         return student;
-
     }
 
     public static void currentStudent(Student student, University university){
@@ -292,6 +289,68 @@ public class Main {
             System.out.println("4. Change major");
             System.out.println("5. Return to main menu");
             System.out.println("6. Quit");
+
+            switch(response){
+                case "1":
+                    student.displayCourses();
+                    break;
+                case "2":
+                    addCourseMenu(student,student.getCollege(),university);
+                    break;
+                case "3":
+                    break;
+                    
+            }
         }
+    }
+
+    public static void addCourseMenu(Student student, College college, University university){
+        System.out.println("Select course. Enter number option");
+        for(int i = 0; i < college.getCourses().size();i++){
+            System.out.println((i+1)+") "+college.getCourses().get(i).getCourse_Name());
+        }
+        Scanner scanner = new Scanner(System.in);
+        String response = scanner.nextLine();
+        int option = Integer.parseInt(response)-1;
+        Course selectedCourse =college.getCourses().get(option);
+        System.out.println("Select section. Enter number option");
+        for(int i =0; i< selectedCourse.getCourseSections().size(); i++){
+            System.out.println((i+1)+") "+selectedCourse.getCourseSections().get(i).getSection_id());
+        }
+
+        response = scanner.nextLine();
+        option = Integer.parseInt(response)-1;
+        CourseSection courseSection = selectedCourse.getCourseSections().get(option);
+        student.addCourseSection(courseSection);
+        System.out.println("1) Add another course");
+        System.out.println("2) Previous menu");
+        System.out.println("3) Main menu");
+
+        response = scanner.nextLine();
+        
+
+        switch(response){
+            case "1":
+                addCourseMenu(student, college,university);
+                break;
+            case "2":
+                currentStudent(student, university);
+                break;
+            case "3":
+                mainMenu(university);
+                break;
+            default:
+                System.out.println("Invalid response");
+                break;     
+        }
+
+
+        
+
+
+
+
+
+
     }
 }

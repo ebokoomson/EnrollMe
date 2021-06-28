@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Course implements Serializable {
-
+    private int course_id;
     private String course_Name;
     private Professor professor;
     private ArrayList<CourseSection> courseSections;
@@ -13,6 +13,10 @@ public class Course implements Serializable {
     public Course(){
 
         numberOfCourses++;
+    }
+
+    public int getCourseID(){
+        return course_id;
     }
 
 
@@ -30,6 +34,10 @@ public class Course implements Serializable {
 
     public College getCollege(){
         return college;
+    }
+
+    public void setCourseID(int courseID){
+        this.course_id=courseID;
     }
 
     public void setCourse_Name(String course_Name) {

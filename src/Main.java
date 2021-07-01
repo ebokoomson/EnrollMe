@@ -109,9 +109,7 @@ public class Main {
             while(rs.next()){
                 Course course= Course.findCourse(courses, rs.getString("Course_ID"));
                 CourseSection section = new CourseSection(rs.getString("CourseSection_ID"),rs.getString("Course_ID"));
-                System.out.println("lol: "+section.getSectionID());
                 course.addCourse(section);  
-                System.out.println("pppp");
             }
 
             strStatement =
@@ -144,7 +142,7 @@ public class Main {
         of a new student
          */
 
-        System.out.println("Enter 1 or 2 ");
+        System.out.println("Enter number options");
         System.out.println("1. Current Student ");
         System.out.println("2. New Student");
         System.out.println("3. Administrator");
@@ -211,12 +209,10 @@ public class Main {
 
     public static Student registerStudent(Student student,University university){
         System.out.println("What college would you like to join");
-        System.out.println("Enter 1, 2, 3, 4, or 5");
-        System.out.println("1. College of Computing and Informatics");
-        System.out.println("2. College of Business");
-        System.out.println("3. College of Engineering");
-        System.out.println("4. College of Arts and Science");
-        System.out.println("5. College of Westphal");
+        System.out.println("Enter college number option");
+        for(int i=0; i< university.getColleges().size(); i++){
+            System.out.println(i+1+") "+university.getColleges().get(i).getCollege_name());
+        }
 
         Scanner scanner = new Scanner(System.in);
         String response= scanner.nextLine();
@@ -241,12 +237,16 @@ public class Main {
                 student.setCollege(colleges.get(4));
                 break;
 
+            case "6":
+                student.setCollege(colleges.get(5));
+                break;
+
             default:
                 System.out.println("Incorrect input");
 
         }
 
-        return student;
+        return selectMajor(student, student.getCollege());
     }
   
     public static Student selectMajor(Student student, College college){
@@ -255,10 +255,20 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int response = scanner.nextInt();
         try{
-        student.setMajor(college.getMajors().get(response+1));
+        student.setMajor(college.getMajors().get(response-1));
+        String sqlStatement= 
+        "INSERT INTO STUDENT VALUES (DEFAULT,'"+student.getStudent_Name()
+        +"',"+student.getCollege().getCollegeID()+","+student.getMajor().getMajorID()+")";
+        statement.executeUpdate(sqlStatement);
+        sqlStatement= 
+        "SELECT MAX(STUDENT_ID) FROM STUDENT";
+       ResultSet rs= statement.executeQuery(sqlStatement);
+       while(rs.next()){
+       student.setStudent_ID(rs.getInt("max"));
+       }
         }
         catch(Exception e){
-            System.out.println("There was an error");
+            System.out.println(e.getMessage());
         }
         return student;
     }
@@ -294,6 +304,7 @@ public class Main {
     }
 
     public static void addCourseMenu(Student student, College college, University university){
+
         System.out.println("Select course. Enter number option");
         for(int i = 0; i < college.getCourses().size();i++){
             System.out.println((i+1)+") "+college.getCourses().get(i).getCourseID()+": "+college.getCourses().get(i).getCourse_Name());

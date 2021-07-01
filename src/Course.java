@@ -2,10 +2,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Course implements Serializable {
-    private int course_id;
+    private String course_id;
     private String course_Name;
     private Professor professor;
-    private ArrayList<CourseSection> courseSections;
+    private ArrayList<CourseSection> courseSections = new ArrayList<>();
     private College college;
     public static int numberOfCourses;
 
@@ -15,7 +15,13 @@ public class Course implements Serializable {
         numberOfCourses++;
     }
 
-    public int getCourseID(){
+    public Course(String courseID, String course_Name, College college){
+        this.setCourseID(courseID);
+        this.setCourse_Name(course_Name);
+        this.setCollege(college);
+    }
+
+    public String getCourseID(){
         return course_id;
     }
 
@@ -36,7 +42,7 @@ public class Course implements Serializable {
         return college;
     }
 
-    public void setCourseID(int courseID){
+    public void setCourseID(String courseID){
         this.course_id=courseID;
     }
 
@@ -45,6 +51,7 @@ public class Course implements Serializable {
     }
 
     public void addCourse(CourseSection course_section){
+        course_section.setCourseID(this.getCourseID());
         courseSections.add(course_section);
     }
 
@@ -59,6 +66,15 @@ public class Course implements Serializable {
 
     public void setCourseSections(ArrayList<CourseSection> courseSections){
         this.courseSections = courseSections;
+    }
+
+    public static Course findCourse(ArrayList<Course> courses,String ID ){
+        for(Course course: courses){
+            if(course.getCourseID().equals(ID)){
+                return course;
+            }
+        }
+        return null;
     }
 
     public void copy(Course course){

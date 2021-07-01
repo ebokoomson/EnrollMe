@@ -1,25 +1,39 @@
 import java.util.ArrayList;
 
 public class CourseSection {
-    private String section_Name;
-    private int section_id;
+    private String section_id;
+    private String course_id;
     private ArrayList<Student> students;
 
-    public String getSection_Name() {
-        return section_Name;
+    public CourseSection(String sectionID,String courseID){
+        this.setCourseID(courseID);
+        this.setSectionID(sectionID);
     }
 
-    public int getSection_id(){
+    public String getSectionID() {
         return section_id;
     }
 
-    public void setSection_id(int section_id){
-        this.section_id= section_id;
+    public String getCourseID(){
+        return course_id;
     }
 
-    
-    public void setSection_Name(String section_Name) {
-        this.section_Name = section_Name;
+    public void setCourseID(String courseID){
+        this.course_id= courseID;
+    }
+
+    public void setSectionID(String sectionID) {
+        this.section_id= sectionID;
+    }
+
+    public static CourseSection findSection(ArrayList<Course> courses, String id){
+        for(Course course: courses){
+            for(CourseSection section: course.getCourseSections())
+            if(section.getSectionID().equals(id)){
+                return section;
+            }
+        }
+        return null;
     }
 
 }

@@ -1,34 +1,42 @@
 import java.io.*;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
+import org.postgresql.util.PSQLException;
 import java.sql.*;
 
 public class Main {
 
+    private static Statement statement= null;
 
-
-
-
-
-    public static void main(String[] args) {
-
+    public static void creatDBConnection(){
         Connection c = null;
         Statement stmt = null;
+        try{
+        Class.forName("org.postgresql.Driver");
+        c= DriverManager.getConnection("jdbc:postgresql://localhost:5432/university", "postgres", "password");
+        System.out.println("Opened database successfully");
+        stmt= c.createStatement();
+        }
+        catch(Exception e){
+            System.out.println("Something went wrong");
+          
+        }
+        statement=stmt;
+    }
+
+    public static void main(String[] args) throws SQLException {
+        creatDBConnection();
         ArrayList<Dean> deans = new ArrayList<Dean>();
         ArrayList<College> colleges = new ArrayList<College>();
         ArrayList<Major> majors = new ArrayList<Major>();
         ArrayList<Student> students = new ArrayList<Student>();
         ArrayList<Professor> professors= new ArrayList<Professor>();
+        ArrayList<Course> courses= new ArrayList<Course>();
 
         try{
-            Class.forName("org.postgresql.Driver");
-            c= DriverManager.getConnection("jdbc:postgresql://localhost:5432/university", "postgres", "password");
-            System.out.println("Opened database successfully");
-            stmt= c.createStatement();
             String strStatement=
             "SELECT * FROM DEAN ORDER BY DEAN_ID";
-            ResultSet rs = stmt.executeQuery(strStatement);
+            ResultSet rs = statement.executeQuery(strStatement);
             while(rs.next()){
                 Dean dean = new Dean(rs.getInt("Dean_ID"),rs.getString("dean_name"));
                 deans.add(dean);
@@ -36,31 +44,31 @@ public class Main {
 
             strStatement = 
             "SELECT * FROM COLLEGE ORDER BY COLLEGE_ID";
-            rs = stmt.executeQuery(strStatement);
+            rs = statement.executeQuery(strStatement);
             while(rs.next()){
                 Dean dean = Dean.findDean(deans, rs.getInt("Dean_ID"));
                 if(dean == null){
                     dean = new Dean();
                  }
                 College college = new College(rs.getInt("College_ID"),rs.getString("College_name"),dean);
-           
                 colleges.add(college);
             }
+
             strStatement =
             "SELECT * FROM MAJOR ORDER BY MAJOR_ID";
-            rs = stmt.executeQuery(strStatement);
+            rs = statement.executeQuery(strStatement);
             while(rs.next()){
                 College college = College.FindCollege(colleges, rs.getInt("College_ID"));
                 if(college==null){
                     college = new College();
                 }
-                 new Major(rs.getInt("Major_ID"),rs.getString("Major_name"),college);
-                
+                 Major major =new Major(rs.getInt("Major_ID"),rs.getString("Major_name"),college);
+                 majors.add(major);   
             }
 
             strStatement =
             "SELECT * FROM STUDENT ORDER BY STUDENT_ID";
-            rs = stmt.executeQuery(strStatement);
+            rs = statement.executeQuery(strStatement);
             while(rs.next()){
                 College college = College.FindCollege(colleges, rs.getInt("College_ID"));
                 Major major = Major.FindMajor(majors, rs.getInt("Major_ID"));
@@ -70,21 +78,49 @@ public class Main {
                 if(major==null){
                     major= new Major();
                 }
-
-                new Student(rs.getInt("Student_ID"),rs.getString("Student_name"),college,major);
-               
+                Student student =new Student(rs.getInt("Student_ID"),rs.getString("Student_name"),college,major);
+                students.add(student);  
             }
 
             strStatement =
             "SELECT * FROM PROFESSOR ORDER BY PROFESSOR_ID";
-            rs = stmt.executeQuery(strStatement);
+            rs = statement.executeQuery(strStatement);
             while(rs.next()){
                 College college = College.FindCollege(colleges, rs.getInt("College_ID"));
                 if(college==null){
                     college = new College();
                 }
+             Professor prof =new Professor(rs.getInt("Professor_ID"),rs.getString("Professor_Name"),college);
+             professors.add(prof);
+            }
 
-             new Professor(rs.getInt("Professor_ID"),rs.getString("Professor_Name"),college);
+            strStatement = 
+            "SELECT * FROM COURSE ORDER BY COURSE_ID";
+            rs = statement.executeQuery(strStatement);
+            while(rs.next()){
+                College college = College.FindCollege(colleges, rs.getInt("College_ID"));
+                Course course = new Course(rs.getString("Course_ID"),rs.getString("Course_name"),college);
+                courses.add(course);
+            }
+
+            strStatement = 
+            "SELECT * FROM COURSESECTION ORDER BY COURSE_ID";
+            rs = statement.executeQuery(strStatement);
+            while(rs.next()){
+                Course course= Course.findCourse(courses, rs.getString("Course_ID"));
+                CourseSection section = new CourseSection(rs.getString("CourseSection_ID"),rs.getString("Course_ID"));
+                System.out.println("lol: "+section.getSectionID());
+                course.addCourse(section);  
+                System.out.println("pppp");
+            }
+
+            strStatement =
+            "SELECT * FROM Student_CourseSection";
+            rs = statement.executeQuery(strStatement);
+            while(rs.next()){
+                CourseSection section= CourseSection.findSection(courses, rs.getString("CourseSection_ID"));
+                Student student = Student.findStudentFrmDB(students,rs.getInt("Student_ID"));
+                student.addCourseSection(section);
             }
 
         }
@@ -93,59 +129,12 @@ public class Main {
         catch(Exception e){
             System.out.println("Something went wrong");
         }
-   
-
-        // for(Dean dean: deans){
-        //     System.out.println("Dean ID: "+ dean.getDeanID());
-        //     System.out.println("Dean name: "+ dean.getDeanName());
-        //     System.out.println("");
-        // }
-
-        // for(College college: colleges){
-        //     college.displayStudents();
-            // System.out.println("College ID: "+ college.getCollegeID());
-            // System.out.println("College name: "+ college.getCollege_name());
-            // System.out.println("Dean name "+college.getDean().getDeanName());
-            // System.out.println("");
-        
-
-        // for(Major major: majors){
-        //     System.out.println("Major ID: "+ major.getMajorID());
-        //     System.out.println("Major name: "+ major.getMajor_name());
-        //     System.out.println("College name "+major.getCollege().getCollege_name());
-        //     System.out.println("");
-        // }
-
-        // for(Professor professor: professors){
-        //     System.out.println("Professor ID: "+ professor.getProfessorID());
-        //     System.out.println("Professor name: "+ professor.getProfessorName());
-        //     System.out.println("College name "+professor.getCollege().getCollege_name());
-        //     System.out.println("");
-        // }
-
-        // for(Student student: students){
-        //     System.out.println("Student ID: "+ student.getStudent_ID());
-        //     System.out.println("Student name: "+ student.getStudent_Name());
-        //     System.out.println("College name "+student.getCollege().getCollege_name());
-        //     System.out.println("");
-        // }
-
-        
-
-
-
-
         System.out.println("Welcome");
 
          University drexel = new University("John Fry");
          drexel.setColleges(colleges);
          mainMenu(drexel);   
         }
-
-
-
-
-
 
     public static void mainMenu (University university){
         String[] args2={};
@@ -169,11 +158,12 @@ public class Main {
             String strID= scanner.nextLine();
             int id = Integer.parseInt(strID);
             Student student=Student.findStudent(id, university);
+            currentStudent(student, university);
 
 
 
             } 
-        else if (status.equals("2")) {
+            else if (status.equals("2")) {
             System.out.println("Enter Full Name:");
             String full_name = scanner.nextLine();
             Student student = new Student();
@@ -212,14 +202,12 @@ public class Main {
                     }
                 }
 
-                else {
+             else {
                     System.out.println("You entered a wrong input");
                     mainMenu(university);
                 }
 
             }
-
-
 
     public static Student registerStudent(Student student,University university){
         System.out.println("What college would you like to join");
@@ -277,18 +265,19 @@ public class Main {
 
     public static void currentStudent(Student student, University university){
         System.out.println("Student name: "+ student.getStudent_Name());
-        System.out.println("Student college: "+student.getCollege() );
-        System.out.println("Student Major: "+ student.getMajor());
-
+        System.out.println("Student college: "+student.getCollege().getCollege_name() );
+        System.out.println("Student Major: "+ student.getMajor().getMajor_name());
+        Scanner scanner = new Scanner(System.in);
         String response ="";
 
-        while(response.equalsIgnoreCase("6")){
+        while(!response.equalsIgnoreCase("6")){
             System.out.println("1. Show classes");
             System.out.println("2. Add Course");
             System.out.println("3. Change college");
             System.out.println("4. Change major");
             System.out.println("5. Return to main menu");
             System.out.println("6. Quit");
+            response=scanner.nextLine();
 
             switch(response){
                 case "1":
@@ -307,7 +296,7 @@ public class Main {
     public static void addCourseMenu(Student student, College college, University university){
         System.out.println("Select course. Enter number option");
         for(int i = 0; i < college.getCourses().size();i++){
-            System.out.println((i+1)+") "+college.getCourses().get(i).getCourse_Name());
+            System.out.println((i+1)+") "+college.getCourses().get(i).getCourseID()+": "+college.getCourses().get(i).getCourse_Name());
         }
         Scanner scanner = new Scanner(System.in);
         String response = scanner.nextLine();
@@ -315,20 +304,29 @@ public class Main {
         Course selectedCourse =college.getCourses().get(option);
         System.out.println("Select section. Enter number option");
         for(int i =0; i< selectedCourse.getCourseSections().size(); i++){
-            System.out.println((i+1)+") "+selectedCourse.getCourseSections().get(i).getSection_id());
+            System.out.println((i+1)+") "+selectedCourse.getCourseSections().get(i).getSectionID());
         }
-
         response = scanner.nextLine();
         option = Integer.parseInt(response)-1;
         CourseSection courseSection = selectedCourse.getCourseSections().get(option);
         student.addCourseSection(courseSection);
-        System.out.println("1) Add another course");
+        String sqlStatement =
+        "INSERT INTO STUDENT_COURSESECTION VALUES ("+student.getStudent_ID()+",'"+courseSection.getSectionID()+"')";
+        try {
+          statement.executeUpdate(sqlStatement);
+          System.out.println("Student enrolled in "+courseSection.getSectionID());
+        }
+        catch(PSQLException pe){
+            System.out.println("Student is already enrolled in the class");
+        }
+         catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("1) Add course");
         System.out.println("2) Previous menu");
         System.out.println("3) Main menu");
-
         response = scanner.nextLine();
-        
-
         switch(response){
             case "1":
                 addCourseMenu(student, college,university);
@@ -343,14 +341,5 @@ public class Main {
                 System.out.println("Invalid response");
                 break;     
         }
-
-
-        
-
-
-
-
-
-
     }
 }

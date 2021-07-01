@@ -71,9 +71,9 @@ public class Student implements Serializable {
     }
 
     public void displayCourses(){
+        System.out.println(this.getCourseSections().size());
         for(CourseSection course: this.getCourseSections()){
-            System.out.println(course.getSection_Name());
-
+            System.out.println(course.getSectionID());
         }
     }
 
@@ -89,6 +89,19 @@ public class Student implements Serializable {
 
         return null;
     }
+
+    public static Student findStudentFrmDB(ArrayList<Student> students, int id){
+
+            for(Student student: students){
+                if(student.getStudent_ID()==id){
+                    return student;
+                }
+            }
+        
+
+        return null;
+    }
+
 
 
 }

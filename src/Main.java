@@ -8,6 +8,10 @@ public class Main {
 
     private static Statement statement= null;
 
+    public static Statement getStatement(){
+        return statement;
+    }
+
     public static void creatDBConnection(){
         Connection c = null;
         Statement stmt = null;
@@ -18,8 +22,7 @@ public class Main {
         stmt= c.createStatement();
         }
         catch(Exception e){
-            System.out.println("Something went wrong");
-          
+           System.out.println("Error connecting to database"); 
         }
         statement=stmt;
     }
@@ -134,7 +137,7 @@ public class Main {
          mainMenu(drexel);   
         }
 
-    public static void mainMenu (University university){
+    public static int mainMenu (University university){
         String[] args2={};
         /*
         Starting point
@@ -204,7 +207,7 @@ public class Main {
                     System.out.println("You entered a wrong input");
                     mainMenu(university);
                 }
-
+                return 0;
             }
 
     public static Student registerStudent(Student student,University university){

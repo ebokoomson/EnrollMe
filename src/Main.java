@@ -112,6 +112,10 @@ public class Main {
             while(rs.next()){
                 Course course= Course.findCourse(courses, rs.getString("Course_ID"));
                 CourseSection section = new CourseSection(rs.getString("CourseSection_ID"),rs.getString("Course_ID"));
+                Time startTime = rs.getTime("Start_time");
+                Time endTime = rs.getTime("End_time");
+                section.setStartTime(startTime.toString());
+                section.setEndTime(endTime.toString());
                 course.addCourse(section);  
             }
 
@@ -180,7 +184,6 @@ public class Main {
             else if(status.equals("3")){
                     Admin.admin_page(university);
                 }
-
             else if(status.equals("4")){
                 university.displayStudents();
                 System.out.println("Go back to main menu (y/n)");
@@ -300,8 +303,7 @@ public class Main {
                     addCourseMenu(student,student.getCollege(),university);
                     break;
                 case "3":
-                    break;
-                    
+                    break;        
             }
         }
     }

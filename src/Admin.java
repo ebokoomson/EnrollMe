@@ -55,6 +55,12 @@ public class Admin {
                 }
                 return admin_page(university);
                 }
+
+            else if(response.equals("3")){
+                while(repeat_response.equals("1")){
+                    addClass(university);
+                }
+            }
             else if(response.equals("7")){
               return  Main.mainMenu(university);
             }
@@ -129,17 +135,84 @@ public class Admin {
             e.printStackTrace();
         }
     }
+    
+    public static void addClass(University university){
+        System.out.println("Select College");
+        for(int i = 0; i<university.getColleges().size(); i++){
+            System.out.println((i+1)+ ") "+ university.getColleges().get(i).getCollege_name());
+        }
+        Scanner scanner = new Scanner(System.in);
+        String collegeOption = scanner.nextLine();
+        College selectedCollege = university.getColleges().get(Integer.parseInt(collegeOption)-1);
+        courseList(selectedCollege);
+        
+        
+    }
+    
+    public static void addSection(Course course){
+        Scanner scanner = new Scanner(System.in);
+        CourseSection section = course.addNewSection();
+           System.out.println("How many days in a week?");
+           String numOfDaysStr = scanner.nextLine();
+           int numOfDays = Integer.parseInt(numOfDaysStr);
+           String day="";
+           for(int i = 0 ; i < numOfDays;i++){
+               System.out.println("Enter Day "+ i);
+               day = scanner.nextLine();
+               section.addDay(day);
+           }
+           System.out.println("Enter Start time");
+           String startTime = scanner.nextLine();
+           System.out.println("Enter End time");
+           String endTime = scanner.nextLine();
+           section.setStartTime(startTime);
+           section.setEndTime(endTime);
+           System.out.println(section);
+           String sqlStatement = 
+            "INSERT INTO CourseSection VALUES ('"+section.getSectionID()+"','"+section.getCourseID()+"',"+3+",'"+section.getDays().get(0)+"','"+startTime+"','"+endTime+"')";
+            try{
+                statement.executeUpdate(sqlStatement);
+                System.out.println("New Course Section Succesfully added to "+course.getCourseID());
+            }
+            catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+           System.out.println("1) Add another section for " + course.getCourseID());
+           System.out.println("2) Return to course list");
+           System.out.println("3) Return to College list");
+           System.out.println("4) Return to admin menu");
+           String response = scanner.nextLine();
 
+           switch(response){
+               case "1":
+                addSection(course);
+                break;
+               case "2":
+
+           }
+
+    }
+
+    public static void courseList(College college){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Select Course");
+        for(int i=0; i< college.getCourses().size(); i++){
+            System.out.println((i+1)+ ") "+ college.getCourses().get(i).getCourseID());
+        }
+        String courseOption = scanner.nextLine();
+        Course selectedCourse = college.getCourses().get(Integer.parseInt(courseOption)-1);
+        System.out.println("1) Add a new Course Section");
+        for(int i= 0; i< selectedCourse.getCourseSections().size();i++){
+            System.out.println((i+2)+") "+ selectedCourse.getCourseSections().get(i));
+        }
+        String response = scanner.nextLine();
+        System.out.println("The response "+ response);
+        if(response.equals("1")){
+            addSection(selectedCourse);
+
+        }
+    }
     public static void main(String[] args) {
-
-
-
-
-
-
-
-
-
 
             }
         }

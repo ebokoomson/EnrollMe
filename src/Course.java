@@ -55,6 +55,15 @@ public class Course implements Serializable {
         courseSections.add(course_section);
     }
 
+    public CourseSection  addNewSection(){
+        int currentNumOfSections = getCourseSections().size();
+        String newSectionID = String.format("-%03d",currentNumOfSections+1);
+        newSectionID = course_id+newSectionID;
+        CourseSection section = new CourseSection(newSectionID);
+        this.addCourse(section);
+        return section;
+    }
+
     public void setCollege(College college){
         this.college= college;
         college.addCourse(this);

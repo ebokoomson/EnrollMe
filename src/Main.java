@@ -17,7 +17,7 @@ public class Main {
         Statement stmt = null;
         try{
         Class.forName("org.postgresql.Driver");
-        c= DriverManager.getConnection("jdbc:postgresql://localhost:5432/university", "postgres", "password");
+        c= DriverManager.getConnection("jdbc:postgresql://localhost:5432/university", "postgres", "kobstersquid");
         System.out.println("Opened database successfully");
         stmt= c.createStatement();
         }
@@ -155,7 +155,8 @@ public class Main {
         System.out.println("3. Administrator");
         System.out.println("4. Display all students");
         System.out.println("5. Display all courses");
-        System.out.println("6. Select Major");
+        System.out.println("6. Select College");
+        System.out.println("7. Select Major");
         Scanner scanner = new Scanner(System.in);
         String status = scanner.nextLine();
          if (status.equals("1")) {
@@ -205,6 +206,12 @@ public class Main {
                     mainMenu(university);
                     }
                 }
+            
+            else if(status.equals("6")){
+                selectCollege(university);
+               
+
+            }
 
              else {
                     System.out.println("You entered a wrong input");
@@ -212,6 +219,65 @@ public class Main {
                 }
                 return 0;
             }
+
+    public static College selectCollege(University university) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<College> colleges = university.getColleges();
+        for(int i=0; i < colleges.size();i++){
+            System.out.println((i+1)+ ") "+ colleges.get(i).getCollege_name());
+        }
+        String collegeOptionStr = scanner.nextLine();
+        College selectedCollege;
+
+        while(true){
+            try{
+                int index = Integer.parseInt(collegeOptionStr);
+                selectedCollege = colleges.get(index-1);
+                break;
+            }
+            catch(NumberFormatException e){
+                System.out.println("Please enter a number");
+                collegeOptionStr = scanner.nextLine();
+            }
+            catch(IndexOutOfBoundsException e){
+                System.out.println("Please enter a number between 1 and "+colleges.size());
+                collegeOptionStr = scanner.nextLine();
+            }
+
+        }
+        System.out.println(selectedCollege);
+        System.out.println("1) Select student");
+        System.out.println("2) Select Major");
+        System.out.println("3) Select Course");
+        System.out.println("4) Select Professor");
+        System.out.println("5) Return to college list");
+        String response = scanner.nextLine();
+        while(true){
+            try{
+                int numberOption=Integer.parseInt(response);
+                if(numberOption>5 || numberOption<0){
+                    throw new Exception();
+                }
+                break;
+            }
+            catch(Exception e){
+                System.out.println("Please enter a number between 1 and 4 inclusize");
+                System.out.println("1) Select student");
+                System.out.println("2) Select Major");
+                System.out.println("3) Select Course");
+                System.out.println("4) Select Professor");
+                System.out.println("5) Return to college list");
+                response = scanner.nextLine();
+            }
+        }
+        switch(response){
+            case "5":
+                selectCollege(university);
+                break;
+
+        }
+        return selectedCollege;
+    }
 
     public static Student registerStudent(Student student,University university){
         System.out.println("What college would you like to join");

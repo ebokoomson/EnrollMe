@@ -1,6 +1,8 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import javax.swing.plaf.synth.SynthToolTipUI;
+
 public  class  College implements Serializable {
 
     protected University university;
@@ -132,6 +134,15 @@ public  class  College implements Serializable {
 
         return null;
 
+    }
+
+    public String toString(){
+        System.out.println(this.getCollege_name());
+        System.out.println("Total number of Students: "+ this.getStudents().size());
+        System.out.println("Total number of Majors: "+ this.getMajors().size());
+        System.out.println("Total number of Courses: "+ this.getCourses().size());
+        System.out.println("Total number of Professors: "+ this.getProfessors().size());
+        return "";
     }
 
 }

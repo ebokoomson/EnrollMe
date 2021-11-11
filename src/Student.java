@@ -102,6 +102,18 @@ public class Student implements Serializable {
         return null;
     }
 
+    public String toString(){
+        System.out.println("Student name: "+this.getStudent_Name());
+        System.out.println("Student College: "+this.getCollege().getCollege_name());
+        System.out.println("Student Major: "+ this.getMajor().getMajorName());
+        ArrayList<String> courses =new ArrayList<>();
+        for(int i =0; i<this.getCourseSections().size();i++ ){
+            courses.add(this.getCourseSections().get(i).getCourseID());
+        }
+        System.out.println("Student Courses: "+ String.join(", ",courses));
+        return "";
+    }
+
 
 
 }

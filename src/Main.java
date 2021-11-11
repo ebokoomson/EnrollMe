@@ -17,7 +17,7 @@ public class Main {
         Statement stmt = null;
         try{
         Class.forName("org.postgresql.Driver");
-        c= DriverManager.getConnection("jdbc:postgresql://localhost:5432/university", "postgres", "kobstersquid");
+        c= DriverManager.getConnection("jdbc:postgresql://localhost:5432/university", "postgres", "password");
         System.out.println("Opened database successfully");
         stmt= c.createStatement();
         }
@@ -141,7 +141,7 @@ public class Main {
          mainMenu(drexel);   
         }
 
-    public static int mainMenu (University university){
+    public static void mainMenu (University university){
         String[] args2={};
         /*
         Starting point
@@ -217,33 +217,43 @@ public class Main {
                     System.out.println("You entered a wrong input");
                     mainMenu(university);
                 }
-                return 0;
+              //  return 0;
             }
 
-    public static College selectCollege(University university) {
-        Scanner scanner = new Scanner(System.in);
-        ArrayList<College> colleges = university.getColleges();
-        for(int i=0; i < colleges.size();i++){
-            System.out.println((i+1)+ ") "+ colleges.get(i).getCollege_name());
-        }
-        String collegeOptionStr = scanner.nextLine();
+    public static void selectCollege(University university, College ...college) {
         College selectedCollege;
-
-        while(true){
-            try{
-                int index = Integer.parseInt(collegeOptionStr);
-                selectedCollege = colleges.get(index-1);
-                break;
+        Scanner scanner = new Scanner(System.in);
+        if(college.length==0){
+            ArrayList<College> colleges = university.getColleges();
+            for(int i=0; i < colleges.size();i++){
+                System.out.println((i+1)+ ") "+ colleges.get(i).getCollege_name());
             }
-            catch(NumberFormatException e){
-                System.out.println("Please enter a number");
-                collegeOptionStr = scanner.nextLine();
-            }
-            catch(IndexOutOfBoundsException e){
-                System.out.println("Please enter a number between 1 and "+colleges.size());
-                collegeOptionStr = scanner.nextLine();
+            System.out.println("Return to main menu (y/Y)");
+            String collegeOptionStr = scanner.nextLine();
+            if(collegeOptionStr.equalsIgnoreCase("Y")){
+                mainMenu(university);
+                return;
             }
 
+            while(true){
+                try{
+                    int index = Integer.parseInt(collegeOptionStr);
+                    selectedCollege = colleges.get(index-1);
+                    break;
+                }
+                catch(NumberFormatException e){
+                    System.out.println("Please enter a number");
+                    collegeOptionStr = scanner.nextLine();
+                }
+                catch(IndexOutOfBoundsException e){
+                    System.out.println("Please enter a number between 1 and "+colleges.size());
+                    collegeOptionStr = scanner.nextLine();
+                }
+
+            }
+        }
+        else{
+            selectedCollege= college[0];
         }
         System.out.println(selectedCollege);
         System.out.println("1) Select student");
@@ -271,12 +281,64 @@ public class Main {
             }
         }
         switch(response){
+            case "1":
+                selectStudent(university,selectedCollege);
             case "5":
                 selectCollege(university);
                 break;
 
         }
-        return selectedCollege;
+    }
+
+    public static void selectStudent(University university, College selectedCollege) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Student> students = selectedCollege.getStudents();
+        for(int i =0; i < students.size();i++){
+            System.out.println((1+i)+") "+ students.get(i).getStudent_Name());
+        }
+        System.out.println("Return to "+selectedCollege.getCollege_name()+" menu (Y/y)");
+        String studenStr = scanner.nextLine();
+        if(studenStr.equalsIgnoreCase("Y")){
+            selectCollege(university, selectedCollege);
+            return;
+        }
+        Student selectedStudent;
+        while(true){
+            try{
+                int numOption= Integer.parseInt(studenStr);
+                if(numOption>students.size() || numOption<0){
+                    throw new Exception();
+                }
+                selectedStudent= students.get(numOption-1);
+                break;
+            }
+            catch(NumberFormatException e){
+                System.out.println("Please enter a number");
+                studenStr = scanner.nextLine();
+            }
+            catch(Exception e){
+                System.out.println("Please enter a number between 1 and "+students.size());
+                studenStr = scanner.nextLine();
+            }
+        }
+        System.out.println(selectedStudent);
+        System.out.println("1) Return to Student list");
+        System.out.println("2) Return to "+selectedCollege.getCollege_name()+ " menu");
+        String response = scanner.nextLine();
+        loop: while(true){
+            switch(response){
+                case "1":
+                    selectStudent(university,selectedCollege);
+                    break loop;
+                case "2":
+                    selectCollege(university,selectedCollege);
+                    break loop;
+                default:
+                    System.out.println("Please enter 1 or 2");
+                    response= scanner.nextLine();
+                    break;
+            }
+        }
     }
 
     public static Student registerStudent(Student student,University university){
@@ -348,7 +410,7 @@ public class Main {
     public static void currentStudent(Student student, University university){
         System.out.println("Student name: "+ student.getStudent_Name());
         System.out.println("Student college: "+student.getCollege().getCollege_name() );
-        System.out.println("Student Major: "+ student.getMajor().getMajor_name());
+        System.out.println("Student Major: "+ student.getMajor().getMajorName());
         Scanner scanner = new Scanner(System.in);
         String response ="";
 

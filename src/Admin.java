@@ -8,7 +8,7 @@ public class Admin {
     private static boolean adminAccess =false;
     private static int passowordAttempts =3;
 
-    public static int admin_page(University university) {
+    public static void admin_page(University university) {
         Scanner scanner = new Scanner(System.in);
         String password;
         String response;
@@ -42,7 +42,8 @@ public class Admin {
                     System.out.println("2) Return to previous menu");
                     repeat_response = scanner.nextLine();
                 }
-                return admin_page(university);
+                admin_page(university);
+                return;
 
             }
 
@@ -53,7 +54,8 @@ public class Admin {
                     System.out.println("2) Return to previous menu");
                     repeat_response = scanner.nextLine();
                 }
-                return admin_page(university);
+                admin_page(university);
+                return;
                 }
 
             else if(response.equals("3")){
@@ -62,7 +64,8 @@ public class Admin {
                 }
             }
             else if(response.equals("7")){
-              return  Main.mainMenu(university);
+                Main.mainMenu(university);
+                return;
             }
 
             System.out.println("Go back to main menu? (y/n)");
@@ -71,8 +74,6 @@ public class Admin {
                 Main.mainMenu(university);
             }
         }
-
-        return 0;
     }
 
     public static void addCourse(University university){

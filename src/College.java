@@ -121,7 +121,7 @@ public  class  College implements Serializable {
 
     public void displayMajors(){
         for(Major major: this.getMajors()){
-            System.out.println(major.getMajor_name());
+            System.out.println(major.getMajorName());
         }
     }
 

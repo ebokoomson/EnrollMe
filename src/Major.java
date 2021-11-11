@@ -18,7 +18,7 @@ public class Major {
         return major_id;
     }
 
-    public String getMajor_name() {
+    public String getMajorName() {
         return major_name;
     }
 

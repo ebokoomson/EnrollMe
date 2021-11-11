@@ -41,6 +41,10 @@ public class CourseSection {
         days.add(day);
     }
 
+    public void addStudent(Student student){
+        students.add(student);
+    }
+
     public String getStartTime(){
         return startTime;
     }
